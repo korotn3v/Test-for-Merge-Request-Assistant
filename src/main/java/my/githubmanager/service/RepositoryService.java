@@ -1,6 +1,8 @@
 package my.githubmanager.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import my.githubmanager.cli.GitHubCLI;
+import my.githubmanager.config.Configuration;
 import my.githubmanager.exception.GitHubManagerException;
 //import my.githubmanager.exception.Repository;
 import my.githubmanager.http.GitHubHttpClient;
@@ -49,6 +51,18 @@ public class RepositoryService {
             return Optional.of(repo);
         } catch (Exception e) {
             throw new GitHubManagerException("Failed to fetch repository", e);
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            RepositoryService repos = new RepositoryService(new GitHubHttpClient(new Configuration().getToken()));
+            List<Repository> ListOfRepos = repos.listRepositories();
+            for (Repository repo : ListOfRepos) {
+                System.out.printf("- %s (%s)%n", repo.getFullName(), repo.getHtmlUrl());
+            }
+        } catch (GitHubManagerException e) {
+            throw new RuntimeException(e);
         }
     }
 }
